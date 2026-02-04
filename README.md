@@ -6,6 +6,8 @@ A simple TCP chat application with a Dockerised server and Dockerised clients.
 
 The server listens on a configurable address and port and writes chat activity to a backup file, while each client connects to the server using a username; Docker Compose is used to build images, run the server, and start one or more interactive client containers on the same Docker network.
 
+The project introduces the fundamentals of TCP client–server communication in Python, covering socket-based networking, concurrent handling of multiple clients with threads, coordination of shared resources using locks and events, shutdown via OS signals and containerised deployment using Docker and Docker Compose, including storage through volumes.
+
 ## Expected project structure
 
 Docker Compose expects the following layout:
