@@ -1,0 +1,22 @@
+services:
+  server:
+    build: ./server
+    environment:
+      - ADDRESS=0.0.0.0
+      - PORT=8000
+      - BACKUP_PATH=/data/Backup.txt
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./server:/app
+      - ./server_data:/data
+
+  client:
+    build: ./client
+    environment:
+      - ADDRESS=server
+      - PORT=8000
+    stdin_open: true
+    tty: true
+    logging:
+      driver: "none"
