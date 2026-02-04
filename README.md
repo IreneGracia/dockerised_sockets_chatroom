@@ -1,26 +1,72 @@
-# TCP Chat Application (Client–Server)
+# Docker Chat (Server + Client)
 
-This project is a simple multi-client chat application built using Python’s low-level TCP sockets, designed to demonstrate core networking, concurrency and systems fundamentals.
+A simple TCP chat application with a Dockerised server and Dockerised clients.
 
-## Architecture & Design Decisions
+## Prerequisites
 
-The system follows a classic client–server model over TCP. The server listens for incoming connections and spawns a dedicated thread per client to handle message reception and broadcasting, ensuring clients operate independently without blocking each other. Thread safety is maintained using `Lock` objects around shared state (connected clients and conversation logs), which prevents race conditions when clients join, leave or send messages concurrently.
+- Docker
+- Docker Compose (`docker compose` or `docker-compose`)
 
-Graceful shutdown is handled using OS signal handling (`SIGINT`, `SIGTERM`) and `Event` objects, allowing both the server and clients to terminate cleanly without leaving hanging sockets. The application can run in both local and Dockerised environments.
+## Overview
 
-A background daemon thread periodically persists chat history to disk.
+The server listens on a configurable address and port and writes chat activity to a backup file, while each client connects to the server using a username; Docker Compose is used to build images, run the server, and start one or more interactive client containers on the same Docker network.
 
-The application is containerised using Docker and docker-compose to ensure consistent runtime behaviour across environments.
+## Expected project structure
 
-## Limitations and possible future improvements
+Docker Compose expects the following layout:
 
-- Replace per-client threads with asyncio .
-- Add authentication or unique username enforcement.
-- Introduce structured logging.
+```
+.
+├── docker-compose.yml
+├── server/
+│   ├── server.py
+│   └── Dockerfile
+└── client/
+    ├── client.py
+    └── Dockerfile
+```
 
-## Running the Project
+If your files are currently in the repository root, move them into the `server/` and `client/` directories before building.
+
+## Build the Docker images
+
+From the repository root:
 
 ```bash
-docker-compose up --build
-python client.py <username>
+docker compose build
 ```
+
+## Run the server
+
+Start the server container:
+
+```bash
+docker compose up server
+```
+
+The server listens on port `8000` and writes its backup file to `/data/Backup.txt` inside the container.
+
+## Run a client
+
+Start an interactive client container (replace the username as needed):
+
+```bash
+docker compose run --rm client python client.py Pedro
+```
+
+You can run multiple clients by opening additional terminals and using different usernames.
+
+## Persisted data
+
+The server mounts a Docker volume at `/data`, so the backup file is preserved across container restarts.
+
+## Environment variables
+
+### Server
+- `ADDRESS` – bind address
+- `PORT` – listening port (default: 8000)
+- `BACKUP_PATH` – path to backup file
+
+### Client
+- `ADDRESS` – server hostname (set to `server` in Docker Compose)
+- `PORT` – server port
