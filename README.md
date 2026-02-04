@@ -2,11 +2,6 @@
 
 A simple TCP chat application with a Dockerised server and Dockerised clients.
 
-## Prerequisites
-
-- Docker
-- Docker Compose (`docker compose` or `docker-compose`)
-
 ## Overview
 
 The server listens on a configurable address and port and writes chat activity to a backup file, while each client connects to the server using a username; Docker Compose is used to build images, run the server, and start one or more interactive client containers on the same Docker network.
@@ -25,8 +20,6 @@ Docker Compose expects the following layout:
     ├── client.py
     └── Dockerfile
 ```
-
-If your files are currently in the repository root, move them into the `server/` and `client/` directories before building.
 
 ## Build the Docker images
 
